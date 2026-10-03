@@ -87,6 +87,14 @@ export default function Home() {
             </div>
             <button onClick={() => setIsGroundTruthOpen(true)} className="flex items-center justify-center gap-2 rounded-2xl bg-[#FF6B00] px-4 py-3 text-sm font-bold shadow-lg shadow-orange-950/30 transition hover:bg-orange-500">
               <Camera className="h-4 w-4" /> Verify my field
+
+            <button
+              onClick={() => setIsTutorialOpen(true)}
+              className="flex items-center gap-1.5 rounded-2xl border border-orange-500/30 bg-orange-500/10 px-4 py-3 text-sm font-bold text-orange-400 shadow-lg shadow-orange-950/20 transition hover:bg-orange-500/20"
+            >
+              <BookOpen className="w-4 h-4" />
+              <span>Panduan & Cara Kerja</span>
+            </button>
             </button>
           </div>
         </section>
