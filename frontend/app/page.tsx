@@ -21,11 +21,14 @@ import {
 } from "lucide-react";
 import CarbonCalculator from "@/components/CarbonCalculator";
 import GroundTruthModal from "@/components/GroundTruthModal";
+import TutorialModal from '../components/TutorialModal';
+import { BookOpen } from 'lucide-react';
 import PleretMap from "@/components/PleretMap";
 
 export default function Home() {
   const [isFarmerMode, setIsFarmerMode] = useState(false);
   const [isGroundTruthOpen, setIsGroundTruthOpen] = useState(false);
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
 
   return (
     <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#0F172A] text-white px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
@@ -151,7 +154,8 @@ export default function Home() {
         </footer>
       </div>
       {isGroundTruthOpen && <GroundTruthModal onClose={() => setIsGroundTruthOpen(false)} />}
-    </main>
+      <TutorialModal isOpen={isTutorialOpen} onClose={() => setIsTutorialOpen(false)} />
+</main>
   );
 }
 
@@ -177,3 +181,4 @@ function MetricCard({ icon, label, value, detail, trend, tone }: { icon: React.R
 function Legend({ color, label }: { color: string; label: string }) {
   return <span className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-sm" style={{ background: color }} />{label}</span>;
 }
+
