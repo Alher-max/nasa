@@ -1,0 +1,39 @@
+name: CD Backend to VPS
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-backend.yml'
+
+jobs:
+  deploy:
+    name: Deploy FastAPI to VPS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Execute Remote SSH Commands on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: 22
+          script: |
+            echo "🚀 Pulling latest code on VPS..."
+            cd /var/www/thortech/carbon
+            git pull origin main
+            
+            echo "📦 Updating Python dependencies..."
+            cd backend
+            source venv/bin/activate
+            pip install -r requirements.txt
+            
+            echo "🔄 Restarting carbon-backend service..."
+            systemctl restart carbon-backend
+            
+            echo "✅ Checking service status..."
+            systemctl is-active --quiet carbon-backend && echo "Backend KarbonTani successfully running!"
