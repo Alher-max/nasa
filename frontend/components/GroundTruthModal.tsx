@@ -25,16 +25,16 @@ export default function GroundTruthModal({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[2000] flex items-center justify-center overflow-y-auto bg-black/75 p-4 backdrop-blur-sm" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-      <section role="dialog" aria-modal="true" aria-labelledby="ground-truth-title" className="my-auto w-full max-w-lg overflow-hidden rounded-3xl border border-slate-700 bg-[#1E293B] shadow-2xl shadow-black/50">
-        <div className="flex items-start justify-between border-b border-slate-700 px-5 py-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/80 p-3 backdrop-blur-sm sm:p-4" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+      <section role="dialog" aria-modal="true" aria-labelledby="ground-truth-title" className="my-auto max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-slate-700 bg-slate-900 p-4 shadow-2xl shadow-black/50 sm:p-6">
+        <div className="flex items-start justify-between border-b border-slate-700 pb-4">
           <div>
             <div className="flex items-center gap-2 text-[#FF6B00]"><Camera className="h-4 w-4" /><span className="text-[10px] font-bold uppercase tracking-[0.16em]">Ground-truth verification</span></div>
             <h2 id="ground-truth-title" className="mt-1 text-lg font-bold">Document your field</h2>
           </div>
           <button aria-label="Close verification modal" onClick={onClose} className="rounded-lg p-2 text-slate-400 hover:bg-slate-700 hover:text-white"><X className="h-4 w-4" /></button>
         </div>
-        <div className="p-5">
+        <div className="pt-4">
           <div className="flex items-center gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-3.5">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400"><Clock3 className="h-4 w-4" /></div>
             <div><p className="text-xs font-bold text-emerald-300">Next NASA Terra Overpass: 10:24 WIB</p><p className="mt-0.5 text-[10px] text-emerald-400/70">In Window · Good conditions for field observation</p></div>

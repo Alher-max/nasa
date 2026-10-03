@@ -101,13 +101,13 @@ export default function CarbonCalculator() {
         </div>
         <span className="rounded-lg bg-emerald-500/10 px-2.5 py-1.5 text-[9px] font-bold uppercase tracking-wider text-emerald-400">Verified model</span>
       </div>
-      <div className="mt-5 flex flex-wrap gap-2">
+      <div className="mt-5 grid w-full grid-cols-3 gap-2">
         <SizeButton selected={Math.abs(hectares - 0.1) < 0.0001} onClick={() => selectPreset(0.1)}>1 Kapling</SizeButton>
         <SizeButton selected={Math.abs(hectares - 0.5) < 0.0001} onClick={() => selectPreset(0.5)}>0.5 Ha</SizeButton>
         <SizeButton selected={Math.abs(hectares - 1) < 0.0001} onClick={() => selectPreset(1)}>1 Ha</SizeButton>
-        <span className="ml-auto self-center text-[10px] text-slate-500">or custom</span>
       </div>
-      <div className="mt-4 flex items-center gap-3">
+      <div className="mt-1 text-right text-[10px] text-slate-500">or custom</div>
+      <div className="mt-2 flex w-full items-center gap-3 py-2">
         <input
           aria-label="Farm size in hectares"
           type="range"
@@ -141,16 +141,16 @@ export default function CarbonCalculator() {
           <TriangleAlert className="h-4 w-4 shrink-0" /> {error}. Make sure the backend is running at {apiUrl}.
         </div>
       )}
-      <div className="mt-4 space-y-2.5">
+      <div className="mt-4">
         <BenefitRow label="Uang Tunai Karbon" value={benefits?.carbon_payout ?? 0} />
         <BenefitRow label="Hemat Pupuk Kimia" value={benefits?.fertilizer_savings ?? 0} />
         <BenefitRow label="Peningkatan Gabah" value={benefits?.grain_yield_increase ?? 0} />
       </div>
-      <div className="mt-4 rounded-2xl border border-[#FBBF24]/20 bg-gradient-to-r from-[#FF6B00]/10 to-[#FBBF24]/10 p-4">
+      <div className="mt-4 w-full rounded-xl border border-orange-500/30 bg-gradient-to-r from-amber-500/10 to-orange-500/10 p-4">
         <div className="flex items-center justify-between gap-2">
-          <div>
+          <div className="min-w-0">
             <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-400">Total cuan ekonomi</p>
-            <p className="mt-1 text-xl font-extrabold tracking-tight sm:text-2xl"><AnimatedRupiah amount={benefits?.total_economic_benefit ?? 0} prominent /><span className="ml-1 text-[10px] font-medium text-slate-500">/ tahun</span></p>
+            <p className="mt-1 break-words text-xl font-black text-amber-400 sm:text-3xl"><AnimatedRupiah amount={benefits?.total_economic_benefit ?? 0} prominent /><span className="ml-1 text-[10px] font-medium text-slate-500">/ tahun</span></p>
           </div>
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FBBF24]/10 text-[#FBBF24]"><ArrowUpRight className="h-5 w-5" /></div>
         </div>
@@ -164,14 +164,14 @@ export default function CarbonCalculator() {
 }
 
 function SizeButton({ selected, onClick, children }: { selected: boolean; onClick: () => void; children: React.ReactNode }) {
-  return <button onClick={onClick} className={`rounded-lg border px-2.5 py-2 text-[10px] font-semibold transition ${selected ? "border-[#FF6B00]/50 bg-[#FF6B00]/10 text-[#FF6B00]" : "border-slate-700 text-slate-400 hover:border-slate-500 hover:text-white"}`}>{children}</button>;
+  return <button onClick={onClick} className={`min-h-[44px] min-w-0 rounded-lg border px-2 py-2 text-[10px] font-semibold transition ${selected ? "border-[#FF6B00]/50 bg-[#FF6B00]/10 text-[#FF6B00]" : "border-slate-700 text-slate-400 hover:border-slate-500 hover:text-white"}`}>{children}</button>;
 }
 
 function BenefitRow({ label, value }: { label: string; value: number }) {
   return (
-    <div className="flex items-center justify-between gap-3 text-[11px]">
-      <span className="text-slate-400">{label}</span>
-      <span className="font-bold text-slate-200"><AnimatedRupiah amount={value} /> <span className="text-[9px] font-medium text-slate-500">/ yr</span></span>
+    <div className="flex items-center justify-between gap-2 border-b border-slate-700/40 py-1.5 text-xs sm:text-sm">
+      <span className="min-w-0 truncate text-slate-400">{label}</span>
+      <span className="shrink-0 whitespace-nowrap font-bold text-slate-200"><AnimatedRupiah amount={value} /> <span className="text-[9px] font-medium text-slate-500">/ yr</span></span>
     </div>
   );
 }
