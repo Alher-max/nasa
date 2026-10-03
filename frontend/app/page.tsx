@@ -182,3 +182,4 @@ function Legend({ color, label }: { color: string; label: string }) {
   return <span className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-sm" style={{ background: color }} />{label}</span>;
 }
 
+

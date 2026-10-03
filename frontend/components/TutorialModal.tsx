@@ -4,16 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { 
   X, 
   BookOpen, 
-  HelpCircle, 
   Leaf, 
   Flame, 
   Satellite, 
-  TrendingUp, 
   CheckCircle2, 
-  ShieldCheck, 
-  ChevronRight,
-  Calculator,
-  Camera
+  ShieldCheck
 } from 'lucide-react';
 
 interface TutorialModalProps {
@@ -182,7 +177,7 @@ export default function TutorialModal({ isOpen, onClose }: TutorialModalProps) {
                 <div>
                   <h4 className="font-bold text-white text-sm">Ambil Bukti Foto Lapangan</h4>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    Saat jerami dicacah/difermentasi, potret menggunakan tombol "Verify my field" pada jendela waktu lintas satelit NASA.
+                    Saat jerami dicacah/difermentasi, potret menggunakan tombol &quot;Verify my field&quot; pada jendela waktu lintas satelit NASA.
                   </p>
                 </div>
               </div>
