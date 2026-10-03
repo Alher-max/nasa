@@ -1,0 +1,34 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "kapanewon": "Pleret",
+        "kabupaten": "Bantul",
+        "gapoktan": "Gapoktan Pleret Makmur",
+        "area_ha": 42.5,
+        "status": "Zero-Burn Verified"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [110.3998, -7.8648],
+            [110.4032, -7.8642],
+            [110.4067, -7.8651],
+            [110.4101, -7.8647],
+            [110.4132, -7.8662],
+            [110.4140, -7.8690],
+            [110.4116, -7.8714],
+            [110.4077, -7.8718],
+            [110.4042, -7.8709],
+            [110.4005, -7.8704],
+            [110.3988, -7.8678],
+            [110.3998, -7.8648]
+          ]
+        ]
+      }
+    }
+  ]
+}
