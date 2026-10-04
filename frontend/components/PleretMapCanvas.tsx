@@ -93,22 +93,22 @@ export default function PleretMapCanvas() {
   return (
     <div className="relative isolate h-[300px] w-full sm:h-[420px] lg:h-[480px]">
       {isLoading && (
-        <div className="absolute inset-0 z-[1000] flex items-center justify-center bg-slate-950/70 text-sm text-slate-300">
+        <div className="absolute inset-0 z-[1000] flex items-center justify-center bg-white/85 text-sm text-body-secondary">
           <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> Loading Pleret field boundaries…
         </div>
       )}
       {error && (
-        <div role="alert" className="absolute left-3 right-3 top-3 z-[1000] flex items-center gap-2 rounded-xl border border-red-500/30 bg-slate-950/95 p-3 text-xs text-red-300">
+        <div role="alert" className="absolute left-3 right-3 top-3 z-[1000] flex items-center gap-2 rounded-xl border border-red-200 bg-white/95 p-3 text-xs text-red-700 shadow-sm">
           <TriangleAlert className="h-4 w-4 shrink-0" /> {error} Check that the backend is running at {apiUrl}.
         </div>
       )}
       {scanComplete && (
-        <div role="status" className="absolute bottom-4 left-1/2 z-[1000] flex w-[calc(100%-1.5rem)] -translate-x-1/2 items-center justify-center gap-2 rounded-xl border border-emerald-400/30 bg-slate-950/95 px-3 py-2 text-center text-xs font-semibold text-emerald-300 shadow-xl sm:w-auto sm:px-3 sm:py-2 sm:text-sm">
+        <div role="status" className="absolute bottom-4 left-1/2 z-[1000] flex min-h-11 w-[calc(100%-1.5rem)] -translate-x-1/2 items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-white/95 px-3 py-2 text-center text-xs font-semibold text-emerald-700 shadow-sm sm:w-auto sm:px-3 sm:py-2 sm:text-sm">
           <Satellite className="h-4 w-4 shrink-0" /> Scan Complete: No thermal anomalies detected in Pleret coordinates
         </div>
       )}
-      {scanError && <div role="alert" className="absolute bottom-4 left-3 right-3 z-[1000] rounded-xl border border-red-500/30 bg-slate-950/95 px-3 py-2 text-xs text-red-300">{scanError}</div>}
-      <MapContainer center={[-7.868, 110.407]} zoom={14} scrollWheelZoom className="h-full w-full bg-[#0F172A]">
+      {scanError && <div role="alert" className="absolute bottom-4 left-3 right-3 z-[1000] rounded-xl border border-red-200 bg-white/95 px-3 py-2 text-xs text-red-700 shadow-sm">{scanError}</div>}
+      <MapContainer center={[-7.868, 110.407]} zoom={14} scrollWheelZoom className="h-full w-full bg-surface-bg">
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -124,7 +124,7 @@ export default function PleretMapCanvas() {
           <>
             <GeoJSON
               data={geojson}
-              style={() => ({ color: "#FF6B00", weight: 2.5, opacity: 1, fillColor: "#22C55E", fillOpacity: 0.38 })}
+              style={() => ({ color: "#FF5E00", weight: 2.5, opacity: 1, fillColor: "#10B981", fillOpacity: 0.28 })}
               onEachFeature={(feature, layer) => {
                 const properties = feature.properties;
                 layer.bindPopup(
@@ -136,7 +136,7 @@ export default function PleretMapCanvas() {
           </>
         )}
         {scanComplete && (
-          <CircleMarker center={[-7.8681, 110.4072]} radius={11} pathOptions={{ color: "#22C55E", fillColor: "#22C55E", fillOpacity: 0.25, weight: 2 }}>
+          <CircleMarker center={[-7.8681, 110.4072]} radius={11} pathOptions={{ color: "#10B981", fillColor: "#10B981", fillOpacity: 0.25, weight: 2 }}>
             <></>
           </CircleMarker>
         )}
@@ -144,9 +144,9 @@ export default function PleretMapCanvas() {
       <button
         onClick={() => void toggleFirmsScan()}
         disabled={isScanning}
-        className="absolute right-3 top-3 z-[500] flex max-w-[calc(100%-3.5rem)] items-center gap-2 rounded-xl border border-slate-600 bg-slate-950/90 px-3 py-2.5 text-xs font-bold text-white shadow-lg transition hover:border-emerald-400/60 hover:bg-slate-900 disabled:cursor-wait disabled:opacity-75"
+        className="absolute right-3 top-3 z-[500] flex min-h-11 max-w-[calc(100%-3.5rem)] items-center gap-2 rounded-xl border border-surface-border bg-white/95 px-3 py-2.5 text-xs font-bold text-body-primary shadow-sm transition hover:border-semantic-success disabled:cursor-wait disabled:opacity-75"
       >
-        <ScanLine className={`h-4 w-4 ${scanComplete ? "text-emerald-400" : "text-[#FBBF24]"}`} />
+        <ScanLine className={`h-4 w-4 ${scanComplete ? "text-semantic-success" : "text-semantic-info"}`} />
         {isScanning ? "Scanning…" : scanComplete ? "Scan complete" : "Simulate FIRMS scan"}
       </button>
     </div>

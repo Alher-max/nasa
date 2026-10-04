@@ -1,14 +1,41 @@
 @import "tailwindcss";
+@config "../tailwind.config.ts";
 
 :root {
-  color-scheme: dark;
-  --background: #0f172a;
-  --foreground: #ffffff;
+  color-scheme: light;
+  --background: #fafafc;
+  --foreground: #0f172a;
+  --brand-primary: #ff5e00;
+  --brand-hover: #e05200;
+  --brand-soft: #fff3eb;
+  --brand-dark: #0f172a;
+  --surface-bg: #fafafc;
+  --surface-card: #ffffff;
+  --surface-border: #e2e8f0;
+  --body-primary: #0f172a;
+  --body-secondary: #475569;
+  --body-muted: #94a3b8;
+  --semantic-success: #10b981;
+  --semantic-info: #0ea5e9;
+  --semantic-error: #ef4444;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-dark: var(--brand-dark);
+  --color-surface-bg: var(--surface-bg);
+  --color-surface-card: var(--surface-card);
+  --color-surface-border: var(--surface-border);
+  --color-body-primary: var(--body-primary);
+  --color-body-secondary: var(--body-secondary);
+  --color-body-muted: var(--body-muted);
+  --color-semantic-success: var(--semantic-success);
+  --color-semantic-info: var(--semantic-info);
+  --color-semantic-error: var(--semantic-error);
   --font-sans: Arial, Helvetica, sans-serif;
   --font-mono: "Courier New", monospace;
 }
@@ -20,6 +47,7 @@
 html {
   min-height: 100%;
   background: var(--background);
+  scroll-behavior: smooth;
 }
 
 body {
@@ -30,21 +58,46 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+button,
+a,
+summary,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 3px solid rgb(14 165 233 / 70%);
+  outline-offset: 2px;
+}
+
 .leaflet-container {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-@media (max-width: 639px) {
-  .leaflet-top.leaflet-left {
-    top: 50%;
-    transform: translateY(-50%);
-  }
+.leaflet-control-zoom a {
+  min-width: 44px;
+  min-height: 44px;
+  line-height: 44px !important;
+  color: var(--body-primary) !important;
+  background: var(--surface-card) !important;
+}
+
+.leaflet-control-zoom {
+  overflow: hidden;
+  border: 1px solid var(--surface-border) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgb(15 23 42 / 10%) !important;
+}
+
+.leaflet-control-attribution {
+  color: var(--body-secondary) !important;
+  background: rgb(255 255 255 / 88%) !important;
 }
 
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
-  background: #1e293b;
-  color: #fff;
+  color: var(--body-primary);
+  background: var(--surface-card);
 }
 
 .leaflet-popup-content {
@@ -53,9 +106,16 @@ body {
 }
 
 .leaflet-popup-content strong {
-  color: #22c55e;
+  color: var(--semantic-success);
 }
 
 .leaflet-popup-close-button {
-  color: #94a3b8 !important;
+  color: var(--body-secondary) !important;
+}
+
+@media (max-width: 639px) {
+  .leaflet-top.leaflet-left {
+    top: 50%;
+    transform: translateY(-50%);
+  }
 }
