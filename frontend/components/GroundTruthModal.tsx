@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Camera, Check, Clock3, Fingerprint, LoaderCircle, MapPin, X } from "lucide-react";
 
 export default function GroundTruthModal({ onClose }: { onClose: () => void }) {
@@ -28,9 +29,12 @@ export default function GroundTruthModal({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/80 p-3 backdrop-blur-sm sm:p-4" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <section role="dialog" aria-modal="true" aria-labelledby="ground-truth-title" className="my-auto max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-surface-border bg-surface-card p-4 text-body-primary shadow-2xl shadow-slate-900/20 sm:p-6">
         <div className="flex items-start justify-between border-b border-surface-border pb-4">
-          <div>
-            <div className="flex items-center gap-2 text-brand-primary"><Camera className="h-4 w-4" /><span className="text-[10px] font-bold uppercase tracking-[0.16em]">Ground-truth verification</span></div>
-            <h2 id="ground-truth-title" className="mt-1 text-lg font-bold">Document your field</h2>
+          <div className="flex min-w-0 items-center gap-3">
+            <Image src="/logo.png" alt="KarbonTani Logo" width={36} height={36} className="h-9 w-9 shrink-0 rounded-xl object-contain" />
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 text-brand-primary"><Camera className="h-4 w-4 shrink-0" /><span className="text-[10px] font-bold uppercase tracking-[0.16em]">Ground-truth verification</span></div>
+              <h2 id="ground-truth-title" className="mt-1 text-lg font-bold">Document your field</h2>
+            </div>
           </div>
           <button aria-label="Close verification modal" onClick={onClose} className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-body-secondary transition hover:bg-slate-100 hover:text-body-primary"><X className="h-4 w-4" /></button>
         </div>

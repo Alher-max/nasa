@@ -143,6 +143,23 @@ targets for range inputs, presets, and custom-value controls.
 - Dialogs use viewport-constrained height (`max-h-[90vh]`) and internal
   scrolling. Map controls and status overlays must not obscure one another.
 
+## Brand Identity & App Icons
+
+- The approved master logo is stored at `public/logo.png`; keep this high-resolution
+  source as the shared asset for page headers, dialogs, and the footer. The
+  generated browser and platform icons live in `public/` and `public/icons/`.
+- Keep `favicon.ico` available at 16, 32, and 48 pixels, and provide a
+  180-pixel Apple touch icon. The PWA manifest uses 192- and 512-pixel
+  standard icons for general install surfaces and a separate 512-pixel
+  maskable icon for adaptive Android launchers.
+- The maskable icon must keep the logo within its central safe area, with
+  approximately 10% padding on every edge; standard icons should use the
+  available canvas without maskable-specific padding.
+- Use the original logo with `object-contain` and a fixed square box so its
+  proportions stay intact. Keep responsive navbar branding compact at 360px,
+  use `shrink-0` for the icon and `min-w-0` for adjacent text, and avoid
+  forcing the brand or tagline beyond the viewport.
+
 ## ThortechShop continuity rules
 
 1. Reuse the shared tokens and component patterns instead of introducing

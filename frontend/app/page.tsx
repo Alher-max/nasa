@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import {
   Activity,
   ArrowDownRight,
@@ -10,9 +11,7 @@ import {
   Check,
   ChevronDown,
   Cloud,
-  Leaf,
   MapPin,
-  Orbit,
   Satellite,
   ShieldCheck,
   Sprout,
@@ -43,14 +42,18 @@ export default function Home() {
     <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-surface-bg px-3 py-4 text-body-primary sm:px-6 sm:py-6 lg:px-8">
       <div className="relative mx-auto w-full max-w-7xl space-y-6">
         <header className="flex w-full flex-col gap-3 border-b border-surface-border bg-surface-card/90 py-5 backdrop-blur-md sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-soft text-brand-primary">
-              <Orbit className="absolute h-8 w-8 opacity-80" strokeWidth={1.5} />
-              <Leaf className="relative h-5 w-5 fill-brand-primary/20" strokeWidth={2.2} />
-            </div>
-            <div>
-              <p className="text-xl font-bold tracking-tight text-body-primary sm:text-2xl">Karbon<span className="text-brand-primary">Tani</span></p>
-              <p className="text-[10px] font-mono tracking-widest text-slate-500 sm:text-xs">{t("common.tagline")}</p>
+          <div className="flex min-w-0 items-center gap-3">
+            <Image
+              src="/logo.png"
+              alt="KarbonTani Logo"
+              width={36}
+              height={36}
+              className="h-9 w-9 shrink-0 rounded-xl object-contain"
+              priority
+            />
+            <div className="min-w-0">
+              <p className="text-lg font-bold tracking-tight text-body-primary sm:text-2xl">Karbon<span className="text-brand-primary">Tani</span></p>
+              <p className="break-words text-[10px] font-mono tracking-widest text-slate-500 sm:text-xs">{t("common.tagline")}</p>
             </div>
           </div>
           <div className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:flex sm:w-auto sm:items-center">

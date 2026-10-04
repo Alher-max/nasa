@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import Image from "next/image";
 import { 
   X, 
-  BookOpen, 
   Leaf, 
   Flame, 
   Satellite, 
@@ -47,9 +47,7 @@ export default function TutorialModal({ isOpen, onClose }: TutorialModalProps) {
         {/* Header Modal */}
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-surface-border bg-surface-card/95 p-4 backdrop-blur sm:p-5">
           <div className="flex items-center gap-2.5">
-            <div className="rounded-xl border border-brand-primary/20 bg-brand-soft p-2 text-brand-primary">
-              <BookOpen className="w-5 h-5" />
-            </div>
+            <Image src="/logo.png" alt="KarbonTani Logo" width={36} height={36} className="h-9 w-9 shrink-0 rounded-xl object-contain" />
             <div>
               <h2 className="text-base font-bold leading-tight text-body-primary sm:text-lg">Panduan & Cara Kerja KarbonTani</h2>
               <p className="text-xs text-body-secondary">NASA Space Apps 2026 • Pilot Pleret, Bantul</p>

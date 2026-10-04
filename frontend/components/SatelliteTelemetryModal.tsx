@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Image from "next/image";
 import type { ReactNode } from "react";
 import { Activity, Check, Clock3, Flame, MapPin, Satellite, X } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -43,13 +44,16 @@ export default function SatelliteTelemetryModal({
         role="dialog"
       >
         <header className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-surface-border bg-surface-card/95 px-5 py-4 backdrop-blur sm:px-6">
-          <div>
-            <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-semantic-info">
-              <Satellite className="h-4 w-4" /> {t("telemetry.eyebrow")}
-            </span>
-            <h2 id="telemetry-modal-title" className="mt-1 text-lg font-bold text-body-primary sm:text-xl">
-              {t("telemetry.title")}
-            </h2>
+          <div className="flex min-w-0 items-center gap-3">
+            <Image src="/logo.png" alt="KarbonTani Logo" width={36} height={36} className="h-9 w-9 shrink-0 rounded-xl object-contain" />
+            <div className="min-w-0">
+              <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-semantic-info">
+                <Satellite className="h-4 w-4 shrink-0" /> {t("telemetry.eyebrow")}
+              </span>
+              <h2 id="telemetry-modal-title" className="mt-1 text-lg font-bold text-body-primary sm:text-xl">
+                {t("telemetry.title")}
+              </h2>
+            </div>
           </div>
           <button
             aria-label={t("telemetry.close")}

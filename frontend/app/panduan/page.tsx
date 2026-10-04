@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowLeft,
   ArrowUpRight,
   BadgeCheck,
-  BookOpen,
   CircleHelp,
   Coins,
   Droplets,
@@ -95,10 +95,15 @@ export default function PanduanPage() {
       <div className="mx-auto w-full max-w-5xl space-y-8 sm:space-y-10">
         <header className="flex flex-col gap-5 border-b border-surface-border bg-surface-card/90 pb-5 backdrop-blur-md sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-brand-primary/20 bg-brand-soft text-brand-primary">
-              <BookOpen className="h-5 w-5" />
-            </span>
-            <div>
+            <Image
+              src="/logo.png"
+              alt="KarbonTani Logo"
+              width={36}
+              height={36}
+              className="h-9 w-9 shrink-0 rounded-xl object-contain"
+              priority
+            />
+            <div className="min-w-0">
               <Link href="/" className="text-sm font-semibold text-body-primary hover:text-brand-primary">
                 Karbon<span className="text-brand-primary">Tani</span>
               </Link>
