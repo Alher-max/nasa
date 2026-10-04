@@ -5,6 +5,7 @@ import {
   Activity,
   ArrowDownRight,
   ArrowUpRight,
+  BookOpen,
   Camera,
   Check,
   ChevronDown,
@@ -21,8 +22,8 @@ import {
 } from "lucide-react";
 import CarbonCalculator from "@/components/CarbonCalculator";
 import GroundTruthModal from "@/components/GroundTruthModal";
-import TutorialModal from '../components/TutorialModal';
-import { BookOpen } from 'lucide-react';
+import TutorialModal from "@/components/TutorialModal";
+import Link from "next/link";
 import PleretMap from "@/components/PleretMap";
 
 export default function Home() {
@@ -59,6 +60,9 @@ export default function Home() {
               <span className={`min-w-0 rounded-lg px-2 py-2 text-center leading-tight transition ${isFarmerMode ? "bg-[#FF6B00] font-bold text-white" : "text-slate-400"}`}>Petani · Mobile</span>
               <span className={`min-w-0 rounded-lg px-2 py-2 text-center leading-tight transition ${!isFarmerMode ? "bg-[#FF6B00] font-bold text-white" : "text-slate-400"}`}>Spasial · Investor/NASA</span>
             </button>
+            <Link href="/panduan" className="flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-sm font-semibold text-emerald-300 transition hover:bg-emerald-500/20 sm:w-auto">
+              <BookOpen className="h-4 w-4 shrink-0" />Panduan Petani
+            </Link>
           </div>
         </header>
 
@@ -87,14 +91,13 @@ export default function Home() {
             </div>
             <button onClick={() => setIsGroundTruthOpen(true)} className="flex items-center justify-center gap-2 rounded-2xl bg-[#FF6B00] px-4 py-3 text-sm font-bold shadow-lg shadow-orange-950/30 transition hover:bg-orange-500">
               <Camera className="h-4 w-4" /> Verify my field
-
+            </button>
             <button
               onClick={() => setIsTutorialOpen(true)}
               className="flex items-center gap-1.5 rounded-2xl border border-orange-500/30 bg-orange-500/10 px-4 py-3 text-sm font-bold text-orange-400 shadow-lg shadow-orange-950/20 transition hover:bg-orange-500/20"
             >
               <BookOpen className="w-4 h-4" />
               <span>Panduan & Cara Kerja</span>
-            </button>
             </button>
           </div>
         </section>
@@ -130,7 +133,7 @@ export default function Home() {
 
           <div className="flex flex-col gap-5">
             <CarbonCalculator />
-            <div className="rounded-3xl border border-slate-700/80 bg-[#1E293B] p-5 sm:p-6">
+            <div id="verification" className="rounded-3xl border border-slate-700/80 bg-[#1E293B] p-5 sm:p-6">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2">
@@ -156,9 +159,13 @@ export default function Home() {
           </div>
         </section>
 
-        <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-800 pt-5 text-[10px] text-slate-500">
-          <span>KarbonTani · Climate-smart rice farming for a thriving future</span>
-          <span>NASA Space Apps Challenge 2026 · Yogyakarta Local Event</span>
+        <footer className="flex flex-col gap-4 border-t border-slate-800 pt-5 text-[10px] text-slate-500 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-1"><p>KarbonTani · Climate-smart rice farming for a thriving future</p><p>NASA Space Apps Challenge 2026 · Yogyakarta Local Event</p></div>
+          <nav aria-label="Tautan cepat" className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-slate-300">
+            <Link className="hover:text-emerald-300" href="/panduan">Panduan Petani</Link>
+            <Link className="hover:text-emerald-300" href="/#verification">Metodologi NASA MRV</Link>
+            <Link className="hover:text-emerald-300" href="/sitemap.xml">Sitemap</Link>
+          </nav>
         </footer>
       </div>
       {isGroundTruthOpen && <GroundTruthModal onClose={() => setIsGroundTruthOpen(false)} />}
