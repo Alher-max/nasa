@@ -9,7 +9,6 @@ import {
   Camera,
   Check,
   ChevronDown,
-  CircleHelp,
   Cloud,
   Leaf,
   MapPin,
@@ -28,12 +27,14 @@ import { useLanguage } from "@/context/LanguageContext";
 import TutorialModal from "@/components/TutorialModal";
 import Link from "next/link";
 import PleretMap from "@/components/PleretMap";
+import type { FirmsScanResult } from "@/lib/firms";
 
 export default function Home() {
   const { t } = useLanguage();
   const [isFarmerMode, setIsFarmerMode] = useState(false);
   const [isGroundTruthOpen, setIsGroundTruthOpen] = useState(false);
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+  const [firmsResult, setFirmsResult] = useState<FirmsScanResult | null>(null);
 
   return (
     <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-surface-bg px-3 py-4 text-body-primary sm:px-6 sm:py-6 lg:px-8">
@@ -127,7 +128,7 @@ export default function Home() {
                 {t("home.layers")} <ChevronDown className="h-3.5 w-3.5" />
               </button>
             </div>
-            <PleretMap />
+            <PleretMap onScanResult={setFirmsResult} />
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-surface-border px-5 py-3.5 text-[11px] text-body-secondary sm:px-6">
               <Legend color="#22C55E" label={t("home.legendVerified")} />
               <Legend color="#FF5E00" label={t("home.legendBoundary")} />
@@ -145,20 +146,37 @@ export default function Home() {
                     <h2 className="text-sm font-bold text-body-primary">{t("home.satelliteTitle")}</h2>
                   </div>
                   <p className="mt-3 text-xs leading-5 text-body-secondary">{t("home.thermalDescription")}</p>
-                  <p className="mt-2 inline-flex rounded-lg border border-semantic-info/20 bg-sky-50 px-2 py-1 text-[10px] font-medium text-sky-800">{t("home.nextSatellitePass")}</p>
+                  <p className="mt-2 inline-flex rounded-lg border border-semantic-info/20 bg-sky-50 px-2 py-1 text-[10px] font-medium text-sky-800">{t("home.liveObservation")}</p>
                 </div>
-                <span className="flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-bold text-emerald-700"><Check className="h-3 w-3" /> {t("home.compliant")}</span>
+                {firmsResult && <span className={`flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-bold ${firmsResult.status === "fallback" || firmsResult.hotspotsCount > 0 ? "border-amber-200 bg-amber-50 text-amber-800" : "border-emerald-200 bg-emerald-50 text-emerald-700"}`}>
+                  {firmsResult.status === "success" && firmsResult.isCompliant ? <Check className="h-3 w-3" /> : <Activity className="h-3 w-3" />}
+                  {firmsResult.status === "fallback"
+                    ? t("home.fallback")
+                    : firmsResult.isCompliant
+                      ? t("home.compliant")
+                      : t("home.reviewRequired")}
+                </span>}
               </div>
               <div className="mt-4 flex items-center justify-between rounded-2xl border border-surface-border bg-surface-bg px-4 py-3">
                 <div>
                   <p className="text-xs font-semibold text-body-primary">{t("home.thermalPass")}</p>
                   <p className="mt-1 text-[10px] text-body-muted">{t("home.boundingBox")}</p>
                 </div>
-                <div className="flex items-center gap-2 text-xs font-bold text-semantic-success"><span className="h-2 w-2 rounded-full bg-semantic-success" /> {t("home.hotspots")}</div>
+                <div className={`flex items-center gap-2 text-xs font-bold $                {firmsResult?.status === "fallback" || (firmsResult?.hotspotsCount ?? 0) > 0 ? "text-amber-700" : "text-semantic-success"}`}>
+                <span className={`h-2 w-2 rounded-full ${firmsResult?.status === "fallback" || (firmsResult?.hotspotsCount ?? 0) > 0 ? "bg-amber-500" : "bg-semantic-success"}`} />
+                {firmsResult
+                  ? firmsResult.status === "fallback"
+                    ? t("home.fallback")
+                    : firmsResult.hotspotsCount === 0
+                      ? t("home.hotspotCountZero")
+                      : t("home.hotspotCount", { count: firmsResult.hotspotsCount })
+                  : t("home.awaitingScan")}
+                </div>
               </div>
-              <div className="mt-3 flex items-center justify-between text-[10px] text-body-muted">
-                <span className="flex items-center gap-1.5"><CircleHelp className="h-3 w-3" /> {t("home.simulatedResponse")}</span>
-                <span>{t("home.sourceFirms")}</span>
+              <div className="mt-3 flex flex-col gap-1 text-[10px] text-body-muted sm:flex-row sm:items-center sm:justify-between">
+                {firmsResult
+                ? <time className="break-all sm:text-right" dateTime={firmsResult.scannedAt} title={firmsResult.scannedAt}>{t("home.scanTime")} · {firmsResult.scannedAt}</time>
+                : <span>{t("home.scanToObserve")}</span>}
               </div>
             </div>
           </div>

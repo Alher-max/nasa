@@ -5,13 +5,16 @@ import {
   CircleMarker,
   GeoJSON,
   MapContainer,
+  Popup,
   TileLayer,
   useMap,
 } from "react-leaflet";
 import type { FeatureCollection } from "geojson";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { LoaderCircle, ScanLine, Satellite, TriangleAlert } from "lucide-react";
+import { LoaderCircle, Radar, ScanLine, Satellite, TriangleAlert } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
+import { isFirmsScanResult, type FirmsScanResult } from "@/lib/firms";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const gibsDate = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString().slice(0, 10);
@@ -27,11 +30,12 @@ function FitPleretBounds({ data }: { data: FeatureCollection }) {
   return null;
 }
 
-export default function PleretMapCanvas() {
+export default function PleretMapCanvas({ onScanResult }: { onScanResult: (result: FirmsScanResult | null) => void }) {
+  const { t } = useLanguage();
   const [geojson, setGeojson] = useState<FeatureCollection | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [scanComplete, setScanComplete] = useState(false);
+  const [scanResult, setScanResult] = useState<FirmsScanResult | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
 
@@ -59,32 +63,27 @@ export default function PleretMapCanvas() {
     return () => controller.abort();
   }, []);
 
-  async function toggleFirmsScan() {
-    if (scanComplete) {
-      setScanComplete(false);
-      return;
-    }
-
+  async function scanFirms() {
     setIsScanning(true);
     setScanError(null);
+    setScanResult(null);
+    onScanResult(null);
     try {
-      const response = await fetch(`${apiUrl}/api/v1/satellites/pleret-status`);
-      if (!response.ok) throw new Error(`NASA FIRMS status request failed (${response.status}).`);
+      const response = await fetch("/api/firms");
       const data: unknown = await response.json();
-      if (
-        !data ||
-        typeof data !== "object" ||
-        !("hotspots_detected" in data) ||
-        typeof data.hotspots_detected !== "number"
-      ) {
-        throw new Error("The satellite status response is invalid.");
+      if (!response.ok) {
+        const message = data && typeof data === "object" && "error" in data && typeof data.error === "string"
+          ? data.error
+          : t("map.scanFailed");
+        throw new Error(message);
       }
-      if (data.hotspots_detected !== 0) {
-        throw new Error(`${data.hotspots_detected} thermal anomalies detected in Pleret.`);
+      if (!isFirmsScanResult(data)) {
+        throw new Error(t("map.invalidSatelliteResponse"));
       }
-      setScanComplete(true);
+      setScanResult(data);
+      onScanResult(data);
     } catch (scanError) {
-      setScanError(scanError instanceof Error ? scanError.message : "Could not complete the NASA FIRMS scan.");
+      setScanError(scanError instanceof Error ? scanError.message : t("map.scanFailed"));
     } finally {
       setIsScanning(false);
     }
@@ -102,9 +101,14 @@ export default function PleretMapCanvas() {
           <TriangleAlert className="h-4 w-4 shrink-0" /> {error} Check that the backend is running at {apiUrl}.
         </div>
       )}
-      {scanComplete && (
-        <div role="status" className="absolute bottom-4 left-1/2 z-[1000] flex min-h-11 w-[calc(100%-1.5rem)] -translate-x-1/2 items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-white/95 px-3 py-2 text-center text-xs font-semibold text-emerald-700 shadow-sm sm:w-auto sm:px-3 sm:py-2 sm:text-sm">
-          <Satellite className="h-4 w-4 shrink-0" /> Scan Complete: No thermal anomalies detected in Pleret coordinates
+      {scanResult && (
+        <div role="status" className={`absolute bottom-4 left-1/2 z-[1000] flex min-h-11 w-[calc(100%-1.5rem)] -translate-x-1/2 items-center justify-center gap-2 rounded-xl border bg-white/95 px-3 py-2 text-center text-xs font-semibold shadow-sm sm:w-auto sm:px-3 sm:py-2 sm:text-sm ${scanResult.status === "fallback" || scanResult.hotspotsCount > 0 ? "border-amber-200 text-amber-800" : "border-emerald-200 text-emerald-700"}`}>
+          <Satellite className={`h-4 w-4 shrink-0 ${scanResult.status === "success" && scanResult.hotspotsCount === 0 ? "animate-pulse" : ""}`} />
+          {scanResult.status === "fallback"
+            ? t("map.scanFallback")
+            : scanResult.hotspotsCount === 0
+              ? t("map.scanComplete")
+              : t("map.hotspotCount", { count: scanResult.hotspotsCount })}
         </div>
       )}
       {scanError && <div role="alert" className="absolute bottom-4 left-3 right-3 z-[1000] rounded-xl border border-red-200 bg-white/95 px-3 py-2 text-xs text-red-700 shadow-sm">{scanError}</div>}
@@ -135,19 +139,30 @@ export default function PleretMapCanvas() {
             <FitPleretBounds data={geojson} />
           </>
         )}
-        {scanComplete && (
-          <CircleMarker center={[-7.8681, 110.4072]} radius={11} pathOptions={{ color: "#10B981", fillColor: "#10B981", fillOpacity: 0.25, weight: 2 }}>
-            <></>
+        {scanResult?.hotspots.map((hotspot, index) => (
+          <CircleMarker
+            key={`${hotspot.latitude}-${hotspot.longitude}-${index}`}
+            center={[hotspot.latitude, hotspot.longitude]}
+            radius={9}
+            pathOptions={{ color: "#B91C1C", fillColor: "#EF4444", fillOpacity: 0.9, weight: 2 }}
+          >
+            <Popup>
+              <strong>{t("map.hotspot")}</strong><br />
+              {t("map.frp")}: {hotspot.frp} MW<br />
+              {t("map.brightness")}: {hotspot.brightness} K<br />
+              {t("map.acquired")}: {hotspot.acqDate} {hotspot.acqTime} UTC<br />
+              {t("map.confidence")}: {hotspot.confidence}
+            </Popup>
           </CircleMarker>
-        )}
+        ))}
       </MapContainer>
       <button
-        onClick={() => void toggleFirmsScan()}
+        onClick={() => void scanFirms()}
         disabled={isScanning}
         className="absolute right-3 top-3 z-[500] flex min-h-11 max-w-[calc(100%-3.5rem)] items-center gap-2 rounded-xl border border-surface-border bg-white/95 px-3 py-2.5 text-xs font-bold text-body-primary shadow-sm transition hover:border-semantic-success disabled:cursor-wait disabled:opacity-75"
       >
-        <ScanLine className={`h-4 w-4 ${scanComplete ? "text-semantic-success" : "text-semantic-info"}`} />
-        {isScanning ? "Scanning…" : scanComplete ? "Scan complete" : "Simulate FIRMS scan"}
+        {isScanning ? <Radar className="h-4 w-4 animate-spin text-semantic-info" /> : <ScanLine className="h-4 w-4 text-semantic-info" />}
+        {isScanning ? t("map.scanning") : t("map.scanLive")}
       </button>
     </div>
   );
