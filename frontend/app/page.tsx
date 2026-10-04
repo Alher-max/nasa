@@ -18,6 +18,7 @@ import {
   Sprout,
   TrendingUp,
   Waves,
+  ClipboardList,
 } from "lucide-react";
 import CarbonCalculator from "@/components/CarbonCalculator";
 import GroundTruthModal from "@/components/GroundTruthModal";
@@ -27,6 +28,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import TutorialModal from "@/components/TutorialModal";
 import Link from "next/link";
 import PleretMap from "@/components/PleretMap";
+import SatelliteTelemetryModal from "@/components/SatelliteTelemetryModal";
 import type { FirmsScanResult } from "@/lib/firms";
 
 export default function Home() {
@@ -34,6 +36,7 @@ export default function Home() {
   const [isFarmerMode, setIsFarmerMode] = useState(false);
   const [isGroundTruthOpen, setIsGroundTruthOpen] = useState(false);
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+  const [isTelemetryOpen, setIsTelemetryOpen] = useState(false);
   const [firmsResult, setFirmsResult] = useState<FirmsScanResult | null>(null);
 
   return (
@@ -162,22 +165,30 @@ export default function Home() {
                   <p className="text-xs font-semibold text-body-primary">{t("home.thermalPass")}</p>
                   <p className="mt-1 text-[10px] text-body-muted">{t("home.boundingBox")}</p>
                 </div>
-                <div className={`flex items-center gap-2 text-xs font-bold $                {firmsResult?.status === "fallback" || (firmsResult?.hotspotsCount ?? 0) > 0 ? "text-amber-700" : "text-semantic-success"}`}>
-                <span className={`h-2 w-2 rounded-full ${firmsResult?.status === "fallback" || (firmsResult?.hotspotsCount ?? 0) > 0 ? "bg-amber-500" : "bg-semantic-success"}`} />
-                {firmsResult
-                  ? firmsResult.status === "fallback"
-                    ? t("home.fallback")
-                    : firmsResult.hotspotsCount === 0
-                      ? t("home.hotspotCountZero")
-                      : t("home.hotspotCount", { count: firmsResult.hotspotsCount })
-                  : t("home.awaitingScan")}
+                <div className={`flex items-center gap-2 text-xs font-bold ${firmsResult?.status === "fallback" || (firmsResult?.hotspotsCount ?? 0) > 0 ? "text-amber-700" : "text-semantic-success"}`}>
+                  <span className={`h-2 w-2 rounded-full ${firmsResult?.status === "fallback" || (firmsResult?.hotspotsCount ?? 0) > 0 ? "bg-amber-500" : "bg-semantic-success"}`} />
+                  {firmsResult
+                    ? firmsResult.status === "fallback"
+                      ? t("home.fallback")
+                      : firmsResult.hotspotsCount === 0
+                        ? t("home.hotspotCountZero")
+                        : t("home.hotspotCount", { count: firmsResult.hotspotsCount })
+                    : t("home.awaitingScan")}
                 </div>
               </div>
               <div className="mt-3 flex flex-col gap-1 text-[10px] text-body-muted sm:flex-row sm:items-center sm:justify-between">
                 {firmsResult
-                ? <time className="break-all sm:text-right" dateTime={firmsResult.scannedAt} title={firmsResult.scannedAt}>{t("home.scanTime")} · {firmsResult.scannedAt}</time>
-                : <span>{t("home.scanToObserve")}</span>}
+                  ? <time className="break-all sm:text-right" dateTime={firmsResult.scannedAt} title={firmsResult.scannedAt}>{t("home.scanTime")} · {firmsResult.scannedAt}</time>
+                  : <span>{t("home.scanToObserve")}</span>}
               </div>
+              <button
+                type="button"
+                onClick={() => setIsTelemetryOpen(true)}
+                className="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-surface-border bg-surface-bg px-4 py-2.5 text-xs font-bold text-body-primary transition hover:border-semantic-info hover:bg-sky-50"
+              >
+                <ClipboardList className="h-4 w-4 text-semantic-info" />
+                {t("telemetry.inspect")}
+              </button>
             </div>
           </div>
         </section>
@@ -185,6 +196,7 @@ export default function Home() {
         <SiteFooter />
       </div>
       {isGroundTruthOpen && <GroundTruthModal onClose={() => setIsGroundTruthOpen(false)} />}
+      {isTelemetryOpen && <SatelliteTelemetryModal result={firmsResult} onClose={() => setIsTelemetryOpen(false)} />}
       <TutorialModal isOpen={isTutorialOpen} onClose={() => setIsTutorialOpen(false)} />
 </main>
   );

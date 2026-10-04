@@ -12,12 +12,17 @@ import {
 import type { FeatureCollection } from "geojson";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { LoaderCircle, Radar, ScanLine, Satellite, TriangleAlert } from "lucide-react";
+import { LoaderCircle, Radar, ScanLine, Satellite, TriangleAlert, Flame } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { isFirmsScanResult, type FirmsScanResult } from "@/lib/firms";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const gibsDate = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString().slice(0, 10);
+const DEMO_HOTSPOTS = [
+  { latitude: -7.8834, longitude: 110.3898, brightness: 326.8, acqDate: "2026-10-04", acqTime: "1024", confidence: "nominal", frp: 5.7 },
+  { latitude: -7.8746, longitude: 110.4212, brightness: 341.2, acqDate: "2026-10-04", acqTime: "1024", confidence: "high", frp: 12.4 },
+  { latitude: -7.9162, longitude: 110.4373, brightness: 318.5, acqDate: "2026-10-04", acqTime: "1024", confidence: "low", frp: 2.1 },
+] as const;
 
 function FitPleretBounds({ data }: { data: FeatureCollection }) {
   const map = useMap();
@@ -38,6 +43,7 @@ export default function PleretMapCanvas({ onScanResult }: { onScanResult: (resul
   const [scanResult, setScanResult] = useState<FirmsScanResult | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
+  const [isDemoHotspotsEnabled, setIsDemoHotspotsEnabled] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -80,9 +86,19 @@ export default function PleretMapCanvas({ onScanResult }: { onScanResult: (resul
       if (!isFirmsScanResult(data)) {
         throw new Error(t("map.invalidSatelliteResponse"));
       }
+      console.info("[KarbonTani] NASA FIRMS scan telemetry", {
+        status: data.status,
+        satellite: data.satellite,
+        scannedAt: data.scannedAt,
+        hotspotsCount: data.hotspotsCount,
+        isCompliant: data.isCompliant,
+        boundingBox: data.boundingBox,
+        hotspots: data.hotspots,
+      });
       setScanResult(data);
       onScanResult(data);
     } catch (scanError) {
+      console.error("[KarbonTani] NASA FIRMS scan request failed.", scanError);
       setScanError(scanError instanceof Error ? scanError.message : t("map.scanFailed"));
     } finally {
       setIsScanning(false);
@@ -102,7 +118,7 @@ export default function PleretMapCanvas({ onScanResult }: { onScanResult: (resul
         </div>
       )}
       {scanResult && (
-        <div role="status" className={`absolute bottom-4 left-1/2 z-[1000] flex min-h-11 w-[calc(100%-1.5rem)] -translate-x-1/2 items-center justify-center gap-2 rounded-xl border bg-white/95 px-3 py-2 text-center text-xs font-semibold shadow-sm sm:w-auto sm:px-3 sm:py-2 sm:text-sm ${scanResult.status === "fallback" || scanResult.hotspotsCount > 0 ? "border-amber-200 text-amber-800" : "border-emerald-200 text-emerald-700"}`}>
+        <div role="status" className={`absolute ${isDemoHotspotsEnabled ? "bottom-20" : "bottom-4"} left-1/2 z-[1000] flex min-h-11 w-[calc(100%-1.5rem)] -translate-x-1/2 items-center justify-center gap-2 rounded-xl border bg-white/95 px-3 py-2 text-center text-xs font-semibold shadow-sm sm:w-auto sm:px-3 sm:py-2 sm:text-sm ${scanResult.status === "fallback" || scanResult.hotspotsCount > 0 ? "border-amber-200 text-amber-800" : "border-emerald-200 text-emerald-700"}`}>
           <Satellite className={`h-4 w-4 shrink-0 ${scanResult.status === "success" && scanResult.hotspotsCount === 0 ? "animate-pulse" : ""}`} />
           {scanResult.status === "fallback"
             ? t("map.scanFallback")
@@ -111,7 +127,12 @@ export default function PleretMapCanvas({ onScanResult }: { onScanResult: (resul
               : t("map.hotspotCount", { count: scanResult.hotspotsCount })}
         </div>
       )}
-      {scanError && <div role="alert" className="absolute bottom-4 left-3 right-3 z-[1000] rounded-xl border border-red-200 bg-white/95 px-3 py-2 text-xs text-red-700 shadow-sm">{scanError}</div>}
+      {scanError && <div role="alert" className={`absolute ${isDemoHotspotsEnabled ? "bottom-20" : "bottom-4"} left-3 right-3 z-[1000] rounded-xl border border-red-200 bg-white/95 px-3 py-2 text-xs text-red-700 shadow-sm`}>{scanError}</div>}
+      {isDemoHotspotsEnabled && (
+        <div role="status" className="absolute bottom-4 left-1/2 z-[1000] w-[calc(100%-1.5rem)] -translate-x-1/2 rounded-xl border border-red-300 bg-white/95 px-3 py-2 text-center text-xs font-bold text-red-800 shadow-sm sm:w-auto">
+          <Flame className="mr-1 inline h-4 w-4" />{t("map.demoBanner")}
+        </div>
+      )}
       <MapContainer center={[-7.868, 110.407]} zoom={14} scrollWheelZoom className="h-full w-full bg-surface-bg">
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -155,15 +176,47 @@ export default function PleretMapCanvas({ onScanResult }: { onScanResult: (resul
             </Popup>
           </CircleMarker>
         ))}
+        {isDemoHotspotsEnabled && DEMO_HOTSPOTS.map((hotspot, index) => (
+          <CircleMarker
+            key={`demo-${hotspot.latitude}-${hotspot.longitude}-${index}`}
+            center={[hotspot.latitude, hotspot.longitude]}
+            radius={10}
+            pathOptions={{ color: "#991B1B", fillColor: "#EF4444", fillOpacity: 0.95, weight: 2 }}
+          >
+            <Popup>
+              <strong>{t("map.demoHotspot")}</strong><br />
+              {t("map.frp")}: {hotspot.frp} MW<br />
+              {t("map.brightness")}: {hotspot.brightness} K<br />
+              {t("map.acquired")}: {hotspot.acqDate} {hotspot.acqTime} UTC<br />
+              {t("map.confidence")}: {hotspot.confidence}<br />
+              <em>{t("map.demoNotLive")}</em>
+            </Popup>
+          </CircleMarker>
+        ))}
       </MapContainer>
-      <button
-        onClick={() => void scanFirms()}
-        disabled={isScanning}
-        className="absolute right-3 top-3 z-[500] flex min-h-11 max-w-[calc(100%-3.5rem)] items-center gap-2 rounded-xl border border-surface-border bg-white/95 px-3 py-2.5 text-xs font-bold text-body-primary shadow-sm transition hover:border-semantic-success disabled:cursor-wait disabled:opacity-75"
-      >
-        {isScanning ? <Radar className="h-4 w-4 animate-spin text-semantic-info" /> : <ScanLine className="h-4 w-4 text-semantic-info" />}
-        {isScanning ? t("map.scanning") : t("map.scanLive")}
-      </button>
+      <div className="absolute right-3 top-3 z-[500] flex max-w-[calc(100%-1.5rem)] flex-col items-end gap-2">
+        <button
+          onClick={() => void scanFirms()}
+          disabled={isScanning}
+          className="flex min-h-11 max-w-full items-center gap-2 rounded-xl border border-surface-border bg-white/95 px-3 py-2.5 text-xs font-bold text-body-primary shadow-sm transition hover:border-semantic-success disabled:cursor-wait disabled:opacity-75"
+        >
+          {isScanning ? <Radar className="h-4 w-4 animate-spin text-semantic-info" /> : <ScanLine className="h-4 w-4 text-semantic-info" />}
+          {isScanning ? t("map.scanning") : t("map.scanLive")}
+        </button>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={isDemoHotspotsEnabled}
+          onClick={() => setIsDemoHotspotsEnabled((enabled) => !enabled)}
+          className={`flex min-h-11 max-w-full items-center gap-2 rounded-xl border px-3 py-2.5 text-xs font-bold shadow-sm transition ${isDemoHotspotsEnabled ? "border-red-300 bg-red-50 text-red-800" : "border-surface-border bg-white/95 text-body-primary hover:border-red-300"}`}
+        >
+          <Flame className={`h-4 w-4 ${isDemoHotspotsEnabled ? "text-red-600" : "text-body-muted"}`} />
+          {t(isDemoHotspotsEnabled ? "map.demoEnabled" : "map.demoToggle")}
+          <span aria-hidden="true" className={`relative h-5 w-9 shrink-0 rounded-full transition ${isDemoHotspotsEnabled ? "bg-red-500" : "bg-slate-300"}`}>
+            <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${isDemoHotspotsEnabled ? "translate-x-4" : "translate-x-0.5"}`} />
+          </span>
+        </button>
+      </div>
     </div>
   );
 }
