@@ -149,7 +149,7 @@ export default function CarbonCalculator() {
       <div className="mt-4 w-full rounded-2xl border border-brand-primary/20 bg-brand-soft/40 p-4">
         <div className="flex items-center justify-between gap-2">
           <div className="min-w-0">
-            <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-body-secondary">Total cuan ekonomi</p>
+            <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-body-secondary">Total manfaat ekonomi</p>
             <p className="mt-1 break-words text-xl font-black sm:text-3xl"><AnimatedRupiah amount={benefits?.total_economic_benefit ?? 0} prominent /><span className="ml-1 text-[10px] font-medium text-body-muted">/ tahun</span></p>
           </div>
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-primary/10 text-brand-primary"><ArrowUpRight className="h-5 w-5" /></div>

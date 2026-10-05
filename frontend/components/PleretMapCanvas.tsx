@@ -212,10 +212,9 @@ export default function PleretMapCanvas({ onScanResult }: { onScanResult: (resul
         >
           <Flame className={`h-4 w-4 ${isDemoHotspotsEnabled ? "text-red-600" : "text-body-muted"}`} />
           {t(isDemoHotspotsEnabled ? "map.demoEnabled" : "map.demoToggle")}
-          <span aria-hidden="true" className={`relative h-5 w-9 shrink-0 rounded-full transition ${isDemoHotspotsEnabled ? "bg-red-500" : "bg-slate-300"}`}>
-            <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${isDemoHotspotsEnabled ? "translate-x-4" : "translate-x-0.5"}`} />
-          </span>
-        </button>
+          <span className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none ${isDemoActive ? "bg-red-600" : "bg-slate-300"}`}>
+                    <span className={`pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-sm ring-0 transition-transform duration-200 ease-in-out ${isDemoActive ? "translate-x-4" : "translate-x-0"}`} />
+                  </span> </button>
       </div>
     </div>
   );

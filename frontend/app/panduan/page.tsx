@@ -98,9 +98,9 @@ export default function PanduanPage() {
             <Image
               src="/logo.png"
               alt="KarbonTani Logo"
-              width={36}
-              height={36}
-              className="h-9 w-9 shrink-0 rounded-xl object-contain"
+              width={48}
+              height={48}
+              className="h-11 w-11 sm:h-12 sm:w-12 shrink-0 rounded-2xl object-contain shadow-xs"
               priority
             />
             <div className="min-w-0">
